@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Inspection Log</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <link href="css/codiqa.ext.min.css" rel="stylesheet">
+  <link href="css/jquery.mobile-1.3.1.min.css" rel="stylesheet">
+
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/jquery.mobile-1.3.1.min.js"></script>
+  <script src="js/codiqa.ext.min.js"></script>
+  <script src="js/inspection-log.js"></script>
+  <script src="js/databaseLocal.js"></script>
+</head>
+
+<body>
+  <div data-role="page" data-control-title="Home" id="page1">
+      <div data-theme="a" data-role="header">
+          <h3>
+              Fabris Inspection Log
+          </h3>
+      </div>
+
+      <div data-role="content">
+        <form action="addNewHeadInspection" method="post" id="formTest">
+          <div class="ui-grid-b">
+              <div class="ui-block-a">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="clientName">
+                          Client
+                      </label>
+                      <input name="clientName" id="clientName" placeholder="Client" value="" type="text" data-bind="value: clientName" class="required" minlength="8" />
+                  </div>
+              </div>
+              <div class="ui-block-b">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="partName">
+                          Part Name
+                      </label>
+                      <input name="" id="partName" placeholder="" value="" type="text" data-bind="value: partName">
+                  </div>
+              </div>
+              <div class="ui-block-c">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="partNumber">
+                          Part Number
+                      </label>
+                      <input name="" id="partNumber" placeholder="" value="" type="text" data-bind="value: partNumber">
+                  </div>
+              </div>
+              <div class="ui-block-a">
+                  <div data-role="fieldcontain" data-controltype="selectmenu">
+                      <label for="typeInspection">
+                          Type of Inspection
+                      </label>
+                      <select id="typeInspection" data-bind="options: availableTypeOfInspection, optionsText: 'typeOfInspectionName', value: selectedTypeOfInspection, optionsCaption: 'Choose...'"></select>
+                  </div>
+              </div>
+              <div class="ui-block-b">
+                  <div data-role="fieldcontain" data-controltype="selectmenu">
+                      <label for="placeInspection">
+                          Place of Inspection
+                      </label>
+                      <select id="placeInspection" name="" data-bind="options: availablePlaceOfInspection, optionsText: 'placeName', value: selectedPlaceOfInspection, optionsCaption: 'Choose...'">
+                      </select>
+                  </div>
+              </div>
+              <div class="ui-block-c">
+                  <div data-role="fieldcontain" data-controltype="dateinput">
+                      <label for="dateinput1">
+                          Date of Inspection
+                      </label>
+                      <input name="" id="dateinput1" placeholder="" value="" type="date" data-bind="value: dateOfInspection">
+                  </div>
+              </div>
+          </div>
+
+
+
+          <!-- End of HeadInspectionHTML  -->
+          <hr style="height:3px; background-color:#ccc; border:0; margin-top:12px; margin-bottom:12px;">
+          <div class="ui-grid-b">
+              <div class="ui-block-a">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput4">
+                          Lot
+                      </label>
+                      <input name="" id="textinput4" placeholder="" value="" type="text">
+                  </div>
+              </div>
+              <div class="ui-block-b">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput5">
+                          Num of Pieces
+                      </label>
+                      <input name="" id="textinput5" placeholder="" value="" type="number">
+                  </div>
+              </div>
+              <div class="ui-block-c">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput6">
+                          Serial
+                      </label>
+                      <input name="" id="textinput6" placeholder="" value="" type="text">
+                  </div>
+              </div>
+              <div class="ui-block-a">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput7">
+                          Date
+                      </label>
+                      <input name="" id="textinput7" placeholder="" value="" type="date">
+                  </div>
+              </div>
+              <div class="ui-block-b">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput8">
+                          Qty OK
+                      </label>
+                      <input name="" id="textinput8" placeholder="" value="" type="number">
+                  </div>
+              </div>
+              <div class="ui-block-c">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput9">
+                          Qty NG
+                      </label>
+                      <input name="" id="textinput9" placeholder="" value="" type="tel">
+                  </div>
+              </div>
+              <div class="ui-block-a">
+                  <div data-controltype="textblock">
+                      <p>
+                          <b>
+                              Defect Details :
+                          </b>
+                      </p>
+                      <p>
+                          <b>
+                              <br>
+                          </b>
+                      </p>
+                  </div>
+              </div>
+              <div class="ui-block-b">
+                  <div data-role="fieldcontain" data-controltype="selectmenu">
+                      <label for="selectmenu3">
+                          Type of Defect
+                      </label>
+                      <select id="selectmenu3" name="">
+                          <option value="A">
+                              Contamination
+                          </option>
+                          <option value="C">
+                              Short Shot
+                          </option>
+                          <option value="B">
+                              Burr
+                          </option>
+                          <option value="D">
+                              Bent Terminal
+                          </option>
+                          <option value="E">
+                              Missing Material
+                          </option>
+                          <option value="E">
+                              Rust
+                          </option>
+                          <option value="G">
+                              Porosity
+                          </option>
+                          <option value="H">
+                              Damage in Bushing
+                          </option>
+                          <option value="I">
+                              Incomplete Box (Pieces)
+                          </option>
+                          <option value="value">
+                              Option
+                          </option>
+                      </select>
+                  </div>
+              </div>
+              <div class="ui-block-c">
+                  <div data-role="fieldcontain" data-controltype="textinput">
+                      <label for="textinput10">
+                          Pieces Affected
+                      </label>
+                      <input name="" id="textinput10" placeholder="" value="" type="number">
+                  </div>
+              </div>
+              <div class="ui-block-a">
+              </div>
+              <div class="ui-block-b">
+                  <div id="checkboxes1" data-role="fieldcontain" data-controltype="checkboxes">
+                      <fieldset data-role="controlgroup" data-type="horizontal">
+                          <legend>
+                              Box:
+                          </legend>
+                          <input id="checkbox1" name="" type="checkbox">
+                          <label for="checkbox1">
+                              Open
+                          </label>
+                          <input id="checkbox2" name="" type="checkbox">
+                          <label for="checkbox2">
+                              Closed
+                          </label>
+                      </fieldset>
+                  </div>
+              </div>
+              <div class="ui-block-c">
+              </div>
+              <div class="ui-block-a">
+                  <a data-role="button" data-theme="b" href="#page1">
+                      Clear Header
+                  </a>
+              </div>
+              <div class="ui-block-b">
+                  <input type="button" data-theme="b" value="Browse Captured Data" data-bind="click: truncateHeadInspectionTable">
+              </div>
+              <div class="ui-block-c">
+                  <input type="submit" data-theme="b" value="Capture Next Record" id="captureNextRecord" data-bind="click: addNewHeadInspection">
+              </div>
+          </div>
+      </div>
+  </div>
+  <script src="js/knockoutjs.js"></script>
+  <script src="js/headInspectionViewModel.js"></script>
+  <script type="text/javascript">
+  $(document).ready(function(){
+  });
+
+
+  </script>
+</body>
+</html>
