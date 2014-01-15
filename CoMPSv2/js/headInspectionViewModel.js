@@ -108,14 +108,13 @@ function HeadInspectionViewModel(){
     self.addNewDetailInspection = function(){
         var detailInspection;
         var str_defects = "";
-        console.log(self.defects.length);
-        if(self.defectsArray.length > 0 ){
-            console.log("Tiene defectos");
-            for(var i = 0; i >= self.defectsArray.length; i++ ){
-                console
-                typeDefect = self.defectArray[i];
-                str_defects += typeDefect.typeOfDefect;
+        console.log(self.defectsArray().length);
+        if(self.defectsArray().length > 0 ){
+            for(var i=0; i >= self.defectsArray().length; i++ ){
+                typeDefect = self.defectArray()[i];
+                str_defects += typeDefect.typeOfDefect + "-";
                 str_defects += typeDefect.qty + ';';
+                console.log("paso1");
             }
         }
         console.log(str_defects);
@@ -132,9 +131,7 @@ function HeadInspectionViewModel(){
     }
 
     self.addDefect = function(){
-        var defecto;
-        defecto = new TypeOfDefect("","");
-        self.defectsArray.push(defecto);
+        self.defectsArray.push(new Defect(self.avaliableTypeOfDefect[0].defectName,"0"));
     }
 
     self.removeDefect = function(defect){
