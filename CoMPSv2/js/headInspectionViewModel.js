@@ -67,9 +67,7 @@ function HeadInspectionViewModel(){
         ]);
 
     self.avaliableTypeOfDefect = [
-        {defectName: "Defect1"},
-        {defectName: "Defect2"},
-        {defectName: "Defect3"}
+        "Defect1", "Defect2", "Defect3"
     ]
 
 
@@ -85,39 +83,59 @@ function HeadInspectionViewModel(){
     self.selectedDefect = ko.observable();
 
     //DATA to create a new InspectionDetail
-    self.lot = ko.observable();
+    self.lotNumber = ko.observable();
     self.numOfPieces = ko.observable();
     self.serial = ko.observable();
     self.qtyNG = ko.observable();
+    self.isBoxOpen = ko.observable();
 
 
     self.addNewHeadInspection = function(){
-        var objeto;
-        objeto = new HeadInspection(self.clientName(), self.partName(), self.partNumber(), self.selectedTypeOfInspection().typeOfInspectionName, self.selectedPlaceOfInspection().placeName, self.dateOfInspection());
-        console.log(self.selectedTypeOfInspection().typeOfInspectionName);
+        var object;
+        object = new HeadInspection(self.clientName(), self.partName(), self.partNumber(), self.selectedTypeOfInspection().typeOfInspectionName, self.selectedPlaceOfInspection().placeName, self.dateOfInspection());
+        //console.log(self.selectedTypeOfInspection().typeOfInspectionName);
         self.db.transaction(function(tx){
             str_Insert = "INSERT INTO InspectionHeader(Name, PartName, \
                 PartNumber, TypeOfInspection, PlaceOfInspection, \
                 DateOfInspection) VALUES(?,?,?,?,?,?)";
-            tx.executeSql(str_Insert,[objeto.client, objeto.partName, objeto.partNumber, objeto.typeOfInspection , objeto.placeOfInspection, objeto.dateOfInspection ], function(result){console.log(result.message);},function(tx,errors){console.log(errors.message + ' ' + errors.code)} );
+            tx.executeSql(str_Insert,[object.client, object.partName, object.partNumber, object.typeOfInspection , object.placeOfInspection, object.dateOfInspection ], function(result){console.log(result.message);},function(tx,errors){console.log(errors.message + ' ' + errors.code)} );
         } );
-        self.currentHeadInspection  = objeto;
+        self.currentHeadInspection  = object;
         document.location.href="#inspectionDetails";
     }
 
     self.addNewDetailInspection = function(){
         var detailInspection;
         var str_defects = "";
+        var numOfPiecesNG = 0;
+        var numOfPiecesOK = 0;
+        var numOfPiecesAffected= 0;
         console.log(self.defectsArray().length);
         if(self.defectsArray().length > 0 ){
-            for(var i=0; i >= self.defectsArray().length; i++ ){
-                typeDefect = self.defectArray()[i];
-                str_defects += typeDefect.typeOfDefect + "-";
-                str_defects += typeDefect.qty + ';';
-                console.log("paso1");
+            for(var i = 0 ; i < self.defectsArray().length; i++){
+                str_defects += self.defectsArray()[i].typeOfDefect() + "-";
+                str_defects += self.defectsArray()[i].qty()+ ";";
+                numOfPiecesAffected += self.defectsArray()[i].qty();
             }
         }
-        console.log(str_defects);
+        // How many pieces are good
+        numOfPiecesOK = self.numOfPieces() - numOfPiecesAffected ;
+        detailInspection = new DetailsInspection(self.currentHeadInspection.partNumber, self.lotNumber(), self.numOfPieces(), self.serial(), numOfPiecesOK, numOfPiecesNG, str_defects, numOfPiecesAffected, self.isBoxOpen());
+
+        self.db.transaction(function(tx){
+            str_Insert = "INSERT INTO InspectionDetail(PartNumber, LotNumber, \
+                NumberOfPieces, SerialNumber, Date, QuantityOk\
+                QuantityNG, TypeOfDefect, piecesAffected, isBoxOpen) VALUES(?,?,?,?,?,?,?,?,?,?)";
+            tx.executeSql(str_Insert,[detailInspection.partNumber, detailInspection.lotNumber, detailInspection.numOfPieces, detailInspection.serialNumber, detailInspection.date, detailInspection.quantityOk,detailInspection.quantityNG,detailInspection.typeOfDefect, detailInspection.piecesAffected, detailInspection.isBoxOpen], function(result){console.log(result.message);},function(tx,errors){console.log(errors.message + ' ' + errors.code)} );
+        } );
+    }
+
+    self.clearData = function(){
+        self.lotNumber = ko.observable(null);
+        self.numOfPieces = ko.observable(null);
+        self.serial = ko.observable(null);
+        self.qtyNG = ko.observable(null);
+        self.isBoxOpen = ko.observable(null);
     }
 
     self.truncateHeadInspectionTable = function(){
@@ -131,11 +149,26 @@ function HeadInspectionViewModel(){
     }
 
     self.addDefect = function(){
+        console.log(typeof self.avaliableTypeOfDefect[0].defectName);
         self.defectsArray.push(new Defect(self.avaliableTypeOfDefect[0].defectName,"0"));
     }
 
     self.removeDefect = function(defect){
         self.defectsArray.remove(defect);
+    }
+
+    self.selectAllData = function() {
+        self.db.transaction(function (tx) {
+          tx.executeSql('SELECT * FROM InspectionHeader', [], function (tx, results) {
+            var len = results.rows.length, i;
+            msg = "<p>Found rows: " + len + "</p>";
+            document.querySelector('#status').innerHTML +=  msg;
+            for (i = 0; i < len; i++){
+                msg = "<p><b>" + results.rows.item(i).log + "</b></p>";
+                //document.querySelector('#status').innerHTML +=  msg;
+                }
+            }, null, null);
+        });
     }
 }
 
