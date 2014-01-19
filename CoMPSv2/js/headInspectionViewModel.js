@@ -164,8 +164,8 @@ function HeadInspectionViewModel(){
             msg = "<p>Found rows: " + len + "</p>";
             document.querySelector('#status').innerHTML +=  msg;
             for (i = 0; i < len; i++){
-                msg = "<p><b>" + results.rows.item(i).log + "</b></p>";
-                //document.querySelector('#status').innerHTML +=  msg;
+                msg = "<p><b>" + results.rows.item(i).Name + "</b></p>";
+                document.querySelector('#status').innerHTML +=  msg;
                 }
             }, null, null);
         });
