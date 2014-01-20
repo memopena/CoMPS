@@ -5,10 +5,10 @@ function browseDataViewModel(){
     self.details = ko.observable();
     self.jsonArr = ko.observableArray();
 
-        self.db.transaction(function(tx){
-            str_query = "SELECT Name, PartName, TypeOfInspection, PlaceOfInspection, DateOfInspection, LotNumber, NumberOfPieces,SerialNumber, QuantityOk ,QuantityNG, isBoxOpen, InspectionHeader.PartNumber From InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber = InspectionDetail.PartNumber"
-            tx.executeSql(str_query,[],function(tx, results){
-                console.log(results);
+    self.db.transaction(function(tx){
+    str_query = "SELECT Name, PartName, TypeOfInspection, PlaceOfInspection, DateOfInspection, LotNumber, NumberOfPieces,SerialNumber, QuantityOk ,QuantityNG, isBoxOpen, InspectionHeader.PartNumber From InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber = InspectionDetail.PartNumber"
+    tx.executeSql(str_query,[],function(tx, results){
+        console.log(results);
                 if(results.rows.length > 0 ){
                     console.log("Data Inside of a Database");
                     for(var i = 0 ; i < results.rows.length; i++){
@@ -33,8 +33,13 @@ function browseDataViewModel(){
                 console.log(errors.message + ' ' + errors.code)
             });
         });
-
+    self.goHome = function(){
+        document.location.href="index.html";
+    }
 
 }
+
+
+
 
 ko.applyBindings(new browseDataViewModel());
