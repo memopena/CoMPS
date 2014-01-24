@@ -14,6 +14,7 @@ function TypeOfDefect(nameDefect){
 }
 
 
+
 function HeadInspectionViewModel(){
     var self = this;
     self.db = getConnection();
@@ -22,33 +23,60 @@ function HeadInspectionViewModel(){
     //Here can we go to database for this data
     // $.getJSON('/some/url',function(data){ Update Object });
     self.availableTypeOfInspection = ko.observableArray([
-        new TypeOfInspection("Washed"),
-        new TypeOfInspection("Dry"),
-        new TypeOfInspection("Wet"),
+        new TypeOfInspection("Sort"),
+        new TypeOfInspection("Rework"),
         ]);
 
     //Here can we go to database for this data
     // $.getJSON('/some/url',function(data){ Update Object });
     self.availablePlaceOfInspection = ko.observableArray([
-        new PlaceOfInspection("Lab"),
-        new PlaceOfInspection("Build"),
-        new PlaceOfInspection("Storage"),
+        new PlaceOfInspection("Customer site"),
+        new PlaceOfInspection("Our Site"),
         ]);
 
     //Here can we go to database for this data
     // $.getJSON('/some/url',function(data){ Update Object });
     self.availableTypeOfDefect = ko.observableArray([
-        new TypeOfDefect("Porosy"),
-        new TypeOfDefect("Bleanch"),
-        new TypeOfDefect("Defect Spot"),
+        new TypeOfDefect("Contamination"),
+        new TypeOfDefect("Burr"),
+        new TypeOfDefect("Short shot"),
+        new TypeOfDefect("Bent Terminal(Box Damage)"),
+        new TypeOfDefect("Bent Terminal(Box Ok)"),
+        new TypeOfDefect("Rust"),
+        new TypeOfDefect("Damaged in Bushing"),
+        new TypeOfDefect("Incomplete Box (Pieces)"),
+        new TypeOfDefect("Incomplete Box (Open)"),
+        new TypeOfDefect("Incomplete Box (For Samples)"),
         ]);
+
+    //Configuration Validator
+    ko.validation.rules.pattern.message = 'Invalid.';
+
+
+    ko.validation.configure({
+        registerExtenders: true,
+        messagesOnModified: true,
+        insertMessages: true,
+        parseInputAttributes: true,
+        messageTemplate: null
+    });
+
+
+    var captcha = function (val) {
+        return val == 11;
+    };
+
+    var mustEqual = function (val, other) {
+        return val == other();
+    };
+
 
 
     //DATA to create a new HeaderInspection
     self.currentHeaderInspection = new HeadInspection();
-    self.clientName = ko.observable();
-    self.partName = ko.observable();
-    self.partNumber = ko.observable();
+    self.clientName = ko.observable().extend({ required: true });
+    self.partName = ko.observable().extend({ required: true });
+    self.partNumber = ko.observable().extend({ required: true });
     self.dateOfInspection = ko.observable();
     self.selectedTypeOfInspection = ko.observable();
     self.selectedPlaceOfInspection = ko.observable();
@@ -64,6 +92,9 @@ function HeadInspectionViewModel(){
     self.isBoxOpen = ko.observable();
     self.piecesAffected = ko.observable();
     self.selectedTypeOfDefect = ko.observable();
+
+    //Arrays of errors in the model
+    self.errors = ko.validation.group(self);
 
     self.addNewHeadInspection = function(){
         var object;
@@ -120,6 +151,17 @@ function HeadInspectionViewModel(){
 
     self.browseData = function(){
         document.location.href="browse.html";
+    }
+
+
+    self.submit = function () {
+        console.log(self.errors());
+        if (self.errors().length == 0) {
+            self.addNewRecord();
+        } else {
+            alert('Please check your submission.');
+            self.errors.showAllMessages();
+        }
     }
 
     self.cleanDetailForm = function(){

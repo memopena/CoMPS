@@ -36,8 +36,13 @@ function createTables(db){
                         TypeOfInspection TEXT NULL, PlaceOfInspection TEXT \
                         NULL, DateOfInspection TEXT NULL,\
                         InspectionDetail_PartNumber TEXT NULL)'
+        var sqlStr_defects = 'CREATE TABLE IF NOT EXISTS \
+                        PartDefect(id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                        PartNumber TEXT NOT NULL, LotNumber TEXT NOT NULL, \
+                        TypeOfDefect TEXT NOT NULL, PartsAffected INTEGER NOT NULL)'
         transaction.executeSql(sqlStr_master, [], function(){ console.log("Table InspectionHeader Create Successful");}, function(db,errors){ console.log(errors.message);});
         transaction.executeSql(sqlStr_details, [], function(){ console.log("Table InspectionDetail Create Successful");}, function(db,errors){ console.log(errors.message);});
+        transaction.executeSql(sqlStr_defects, [], function(){ console.log("Table PartDefect Create Successful");}, function(db,errors){ console.log(errors.message);});
     });
 }
 
@@ -47,6 +52,7 @@ function deleteDatabases(db){
         transaction.executeSql("DROP TABLE IF EXISTS InspectionHeader");
         transaction.executeSql("DROP TABLE IF EXISTS InspectionDetail");
         transaction.executeSql("DROP TABLE IF EXISTS masterClient");
+        transaction.executeSql("DROP TABLE IF EXISTS PartDefect");
     })
 }
 

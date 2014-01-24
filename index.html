@@ -9,7 +9,8 @@
 
   <link href="css/codiqa.ext.min.css" rel="stylesheet">
   <link href="css/jquery.mobile-1.3.1.min.css" rel="stylesheet">
-  <link href="css/jquery.mobile.datepicker.css" rel="stylesheet">
+  <link href="css/style-app.css" rel="stylesheet">
+
 
   <script src="js/jquery-1.9.1.min.js"></script>
   <script src="js/jquery.mobile-1.3.1.min.js"></script>
@@ -136,22 +137,11 @@
                   </div>
               </div>
               <div class="ui-block-a">
-                  <div data-controltype="textblock">
-                      <p>
-                          <b>
-                              Defect Details :
-                          </b>
-                      </p>
-                      <p>
-                          <b>
-                              <br>
-                          </b>
-                      </p>
-                  </div>
+
               </div>
               <div class="ui-block-b">
                   <div data-role="fieldcontain" data-controltype="selectmenu">
-                      <label for="selectmenu3">
+                      <label for="typeOfDefect">
                           Type of Defect
                       </label>
                      <select id="typeOfDefect" data-bind="options: availableTypeOfDefect, optionsText: 'nameOfDefect', value: selectedTypeOfDefect, optionsCaption: 'Choose...'"></select>
@@ -175,6 +165,7 @@
                     </select>
               </div>
               <div class="ui-block-c">
+
               </div>
               <div class="ui-block-a">
                   <input type="button" data-theme="b" value="New Part" data-bind="click: addNewPart">
@@ -183,12 +174,13 @@
                   <input type="button" data-theme="b" value="Browse Captured Data" data-bind="click: browseData">
               </div>
               <div class="ui-block-c">
-                  <input type="submit" data-theme="b" value="Capture Next Record" id="captureNextRecord" data-bind="click: addNewRecord">
+                  <input type="submit" data-theme="b" value="Capture Next Record" id="captureNextRecord" data-bind="click: submit">
               </div>
           </div>
       </div>
   </div>
   <script src="js/knockoutjs.js"></script>
+  <script src="js/knockout.validation.js"></script>
   <script src="js/headInspectionViewModel.js"></script>
   <script type="text/javascript">
   $(document).ready(function(){
