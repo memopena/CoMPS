@@ -19,6 +19,7 @@
   <script src="js/databaseLocal.js"></script>
   <script src="js/HeadInspection.js"></script>
   <script src="js/DetailsInspection.js"></script>
+  <script src="js/PartDefect.js"></script>
 </head>
 
 <body>
@@ -133,48 +134,61 @@
                       <label for="quantityNG">
                           Qty NG
                       </label>
-                      <input name="" id="quantityNG" placeholder="" value="" type="number" data-bind="value: quantityNG">
+                      <input name="" id="quantityNG" placeholder="" value="" type="number" data-bind="value: totalNG, disable: true" style="">
                   </div>
               </div>
-              <div class="ui-block-a">
-
-              </div>
-              <div class="ui-block-b">
+          </div>
+              <div class="ui-grid-c custom-grid-c">
+                <div class="ui-block-a">
                   <div data-role="fieldcontain" data-controltype="selectmenu">
-                      <label for="typeOfDefect">
-                          Type of Defect
-                      </label>
-                     <select id="typeOfDefect" data-bind="options: availableTypeOfDefect, optionsText: 'nameOfDefect', value: selectedTypeOfDefect, optionsCaption: 'Choose...'"></select>
-                  </div>
-              </div>
-              <div class="ui-block-c">
+                        <label for="typeOfDefect">
+                            Type of Defect
+                        </label>
+                       <select id="typeOfDefect" data-bind="options: availableTypeOfDefect, optionsText: 'nameOfDefect', value: selectedTypeOfDefect, optionsCaption: 'Choose...'"></select>
+                    </div>
+                </div>
+                <div class="ui-block-b">
                   <div data-role="fieldcontain" data-controltype="textinput">
-                      <label for="piecesAffected">
-                          Pieces Affected
-                      </label>
-                      <input name="" id="piecesAffected" placeholder="" value="" type="number" data-bind="value: piecesAffected">
+                        <label for="piecesAffected">
+                            Pieces Affected
+                        </label>
+                        <input name="" id="piecesAffected" placeholder="" value="" type="number" data-bind="value: piecesAffected">
+                    </div>
+                </div>
+                <div class="ui-block-c">
+                  <input type="submit" data-theme="a" value="Add Defect" id="addDefect" data-bind="click: addDefect">
+                </div>
+                <div class="ui-block-d">
+                  <label for="defects" value="Defects">Defects: </label>
+                  <div data-bind="foreach: typeOfDefectsArray">
+                    <div class="defectDetail" data-bind="text: nameOfDefect"></div>
+                    <div class="defectDetail" data-bind="text: partsAffected"></div>
                   </div>
+                </div>
               </div>
-              <div class="ui-block-a">
+              <div class="ui-grid-b">
+                <div class="ui-block-a">
+                </div>
+                <div class="ui-block-b">
+                    <label for="flip-min">Box:</label>
+                      <select name="flip-min" id="flip-min" data-role="slider" data-bind="value: isBoxOpen">
+                          <option value="1">Open</option>
+                          <option value="0">Close</option>
+                      </select>
+                </div>
+                <div class="ui-block-c">
+                </div>
               </div>
-              <div class="ui-block-b">
-                  <label for="flip-min">Box:</label>
-                    <select name="flip-min" id="flip-min" data-role="slider" data-bind="value: isBoxOpen">
-                        <option value="1">Open</option>
-                        <option value="0">Close</option>
-                    </select>
-              </div>
-              <div class="ui-block-c">
-
-              </div>
-              <div class="ui-block-a">
-                  <input type="button" data-theme="b" value="New Part" data-bind="click: addNewPart">
-              </div>
-              <div class="ui-block-b">
-                  <input type="button" data-theme="b" value="Browse Captured Data" data-bind="click: browseData">
-              </div>
-              <div class="ui-block-c">
-                  <input type="submit" data-theme="b" value="Capture Next Record" id="captureNextRecord" data-bind="click: submit">
+              <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <input type="button" data-theme="b" value="New Part" data-bind="click: deleteDataBase">
+                </div>
+                <div class="ui-block-b">
+                    <input type="button" data-theme="b" value="Browse Captured Data" data-bind="click: browseData">
+                </div>
+                <div class="ui-block-c">
+                    <input type="submit" data-theme="b" value="Capture Next Record" id="captureNextRecord" data-bind="click: submit">
+                </div>
               </div>
           </div>
       </div>

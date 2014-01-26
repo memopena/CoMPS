@@ -8,9 +8,10 @@ function PlaceOfInspection(placeName){
     self.placeName = placeName;
 }
 
-function TypeOfDefect(nameDefect){
+function TypeOfDefect(nameDefect, partsAffected){
     var self = this;
     self.nameOfDefect = nameDefect;
+    self.partsAffected = partsAffected;
 }
 
 
@@ -19,6 +20,27 @@ function HeadInspectionViewModel(){
     var self = this;
     self.db = getConnection();
     createTables(self.db);
+
+    //Configuration Validator
+    ko.validation.rules.pattern.message = 'Invalid.';
+
+
+    ko.validation.configure({
+        registerExtenders: true,
+        messagesOnModified: true,
+        insertMessages: true,
+        parseInputAttributes: true,
+        messageTemplate: null
+    });
+
+
+    var captcha = function (val) {
+        return val == 11;
+    };
+
+    var mustEqual = function (val, other) {
+        return val == other();
+    };
 
     //Here can we go to database for this data
     // $.getJSON('/some/url',function(data){ Update Object });
@@ -49,49 +71,34 @@ function HeadInspectionViewModel(){
         new TypeOfDefect("Incomplete Box (For Samples)"),
         ]);
 
-    //Configuration Validator
-    ko.validation.rules.pattern.message = 'Invalid.';
-
-
-    ko.validation.configure({
-        registerExtenders: true,
-        messagesOnModified: true,
-        insertMessages: true,
-        parseInputAttributes: true,
-        messageTemplate: null
-    });
-
-
-    var captcha = function (val) {
-        return val == 11;
-    };
-
-    var mustEqual = function (val, other) {
-        return val == other();
-    };
-
-
-
     //DATA to create a new HeaderInspection
     self.currentHeaderInspection = new HeadInspection();
     self.clientName = ko.observable().extend({ required: true });
     self.partName = ko.observable().extend({ required: true });
     self.partNumber = ko.observable().extend({ required: true });
-    self.dateOfInspection = ko.observable();
-    self.selectedTypeOfInspection = ko.observable();
-    self.selectedPlaceOfInspection = ko.observable();
+    self.dateOfInspection = ko.observable().extend({ required: true });;
+    self.selectedTypeOfInspection = ko.observable().extend({ required: true });;
+    self.selectedPlaceOfInspection = ko.observable().extend({ required: true });;
 
 
     //DATA to create a new Detail Inspection
-    self.lotNumber = ko.observable();
-    self.numOfPieces = ko.observable();
+    self.lotNumber = ko.observable().extend({ required: true });;
+    self.numOfPieces = ko.observable().extend({ required: true });;
     self.serialNumber = ko.observable();
-    self.dateDetail = ko.observable();
-    self.quantityOk = ko.observable();
+    self.dateDetail = ko.observable().extend({ required: true });;
+    self.quantityOk = ko.observable().extend({ required: true });;
     self.quantityNG = ko.observable();
     self.isBoxOpen = ko.observable();
     self.piecesAffected = ko.observable();
     self.selectedTypeOfDefect = ko.observable();
+    self.typeOfDefectsArray = ko.observableArray();
+
+    self.totalNG = ko.computed(function(){
+        var total;
+        total = parseInt(self.numOfPieces()) - parseInt(self.quantityOk());
+        self.quantityNG(total);
+        return total;
+    });
 
     //Arrays of errors in the model
     self.errors = ko.validation.group(self);
@@ -101,49 +108,42 @@ function HeadInspectionViewModel(){
         object = new HeadInspection(self.clientName(), self.partName(), self.partNumber(), self.selectedTypeOfInspection().typeOfInspectionName, self.selectedPlaceOfInspection().placeName, self.dateOfInspection());
         saveHeadInspection(object, self.db);
         self.currentHeaderInspection = object;
-        console.log("log");
+        console.log("Head inspection Added sucessful");
     }
 
     self.addNewDetailInspection = function(){
         var object;
-        object = new DetailsInspection(self.currentHeaderInspection.partNumber, self.lotNumber(), self.numOfPieces(), self.serialNumber(), self.quantityOk(), self.quantityNG(), self.selectedTypeOfDefect, self.piecesAffected, self.isBoxOpen());
+        object = new DetailsInspection(self.currentHeaderInspection.partNumber, self.lotNumber(), self.numOfPieces(), self.serialNumber(), self.dateDetail(), self.quantityOk(), self.quantityNG(), self.isBoxOpen());
         saveDetailsInspection(object, self.db);
+    }
+
+    self.addNewDefectPart = function(){
+        var object;
+        console.log(self.typeOfDefectsArray());
+        for(var i = 0; i < self.typeOfDefectsArray().length ; i++){
+            object = new PartDefect(self.currentHeaderInspection.partNumber, self.lotNumber(), self.typeOfDefectsArray()[i].nameOfDefect, self.typeOfDefectsArray()[i].partsAffected);
+            savePartDefect(object, self.db);
+        }
+
     }
 
     self.deleteDataBase = function(){
         deleteDatabases(self.db);
     }
 
-    self.test = function(){
-        var header;
-        var detail;
-        //Create a Header Object
-        header = new HeadInspection("ClienteTest", "ParteTest", "9999", "Type Of Inspection Test", "Place of Inspection", "2014-01-18");
-        //Create a Detail Object
-        detail = new DetailsInspection(header.partNumber, "100", '276', "55555","2014-18-01", "260", "16", "Porosity", "16", "1","1");
-        //test Save Object in Database
-        saveHeadInspection(header, self.db);
-        saveDetailsInspection(detail, self.db);
-    }
+
 
     self.addNewRecord = function(){
         console.log(self.currentHeaderInspection)
         if(typeof self.currentHeaderInspection.partNumber === 'undefined'){
-            var head;
-            var detail;
-            head = new HeadInspection(self.clientName(), self.partName(), self.partNumber(), self.selectedTypeOfInspection().typeOfInspectionName, self.selectedPlaceOfInspection().placeName, self.dateOfInspection());
-            saveHeadInspection(head, self.db);
-            self.currentHeaderInspection = head;
-
-            detail = new DetailsInspection(self.currentHeaderInspection.partNumber, self.lotNumber(), self.numOfPieces(), self.serialNumber(),self.dateDetail(), self.quantityOk(), self.quantityNG(), self.selectedTypeOfDefect().nameOfDefect, self.piecesAffected(), self.isBoxOpen());
-            saveDetailsInspection(detail, self.db);
+            self.addNewHeadInspection();
+            self.addNewDetailInspection();
+            self.addNewDefectPart();
             self.cleanDetailForm();
             window.alert("New record successfully entered");
         }else{
-            var object;
-            object = new DetailsInspection(self.currentHeaderInspection.partNumber, self.lotNumber(), self.numOfPieces(), self.serialNumber(), self.dateDetail(), self.quantityOk(), self.quantityNG(), self.selectedTypeOfDefect().nameOfDefect, self.piecesAffected(), self.isBoxOpen());
-            saveDetailsInspection(object, self.db);
-            //Clean Data for Inspection Detail
+            self.addNewDetailInspection();
+            self.addNewDefectPart();
             self.cleanDetailForm();
             window.alert("Detail inspection successfully entered");
         }
@@ -190,6 +190,37 @@ function HeadInspectionViewModel(){
     self.addNewPart = function(){
         self.cleanHeaderForm();
         document.location.reload();
+    }
+
+    self.addDefect = function(){
+        if(self.selectedTypeOfDefect() != 'undefined' && parseInt(self.piecesAffected()) > 0){
+            self.typeOfDefectsArray.push(new TypeOfDefect(self.selectedTypeOfDefect().nameOfDefect, self.piecesAffected()));
+        console.log(self.typeOfDefectsArray());
+        }else {
+            window.alert("Please insert Valid data");
+        }
+
+    }
+
+     self.test = function(){
+        var header;
+        var detail;
+        var defects = [];
+        //Create a Header Object
+        header = new HeadInspection("ClienteTest", "ParteTest", "9999", "Type Of Inspection Test", "Place of Inspection", "2014-01-18");
+        //Create a Detail Object
+        detail = new DetailsInspection(header.partNumber, "100", '276', "55555","2014-18-01", "260", "16", "Porosity", "16", "1","1");
+
+        defects.push(new TypeOfDefect("Local","15"));
+        defects.push(new TypeOfDefect("test","16"));
+        //test Save Object in Database
+        saveHeadInspection(header, self.db);
+        saveDetailsInspection(detail, self.db);
+        for(var i = 0 ; i < defects.length; i++){
+            object = new PartDefect(header.partNumber, detail.lotNumber, defects[i].nameOfDefect, defects[i].partsAffected);
+            savePartDefect(object, self.db);
+            console.log(object);
+        }
     }
 }
 

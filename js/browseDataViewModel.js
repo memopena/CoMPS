@@ -10,7 +10,6 @@ function browseDataViewModel(){
     tx.executeSql(str_query,[],function(tx, results){
         console.log(results);
                 if(results.rows.length > 0 ){
-                    console.log("Data Inside of a Database");
                     for(var i = 0 ; i < results.rows.length; i++){
                         self.jsonArr.push({
                             'name': results.rows.item(i).Name,
@@ -27,7 +26,7 @@ function browseDataViewModel(){
                             'partnumber': results.rows.item(i).PartNumber
                         })
                     }
-                    console.log(self.jsonArr[0]);
+                    console.log(ko.toJSON(self.jsonArr()));
                 }
             }, function(tx,errors){
                 console.log(errors.message + ' ' + errors.code)
@@ -35,6 +34,10 @@ function browseDataViewModel(){
         });
     self.goHome = function(){
         document.location.href="index.html";
+    }
+
+    self.sendData = function(){
+        $.post("showJson.html", ko.toJSON(self.jsonArr()), function(returnedData){ console.log("Enviado")});
     }
 
 }

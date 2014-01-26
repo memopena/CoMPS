@@ -28,7 +28,6 @@ function createTables(db){
                         LotNumber TEXT NULL, NumberOfPieces INTEGER NULL,\
                         SerialNumber TEXT NULL, Date TEXT NULL,\
                         QuantityOk INTEGER NULL, QuantityNG INTEGER NULL,\
-                        TypeOfDefect TEXT NULL, piecesAffected INTEGER NULL,\
                         isBoxOpen INTEGER NULL)'
         var sqlStr_master = 'CREATE TABLE IF NOT EXISTS \
                         InspectionHeader(id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL,\
@@ -51,7 +50,6 @@ function deleteDatabases(db){
     db.transaction(function(transaction){
         transaction.executeSql("DROP TABLE IF EXISTS InspectionHeader");
         transaction.executeSql("DROP TABLE IF EXISTS InspectionDetail");
-        transaction.executeSql("DROP TABLE IF EXISTS masterClient");
         transaction.executeSql("DROP TABLE IF EXISTS PartDefect");
     })
 }
