@@ -124,9 +124,9 @@ function browseDataViewModel(){
         var local = ko.observableArray();
         var details = ko.observableArray();
         var part = partNumber;
-        local = self.db.transaction(function(tx){
+        self.db.transaction(function(tx){
             str_query = "SELECT * FROM InspectionDetail WHERE PartNumber== ?";
-            tx.executeSql(str_query,[part],function(tx,results){
+            local = tx.executeSql(str_query,[part],function(tx,results){
                 if(results.rows.length > 0 ){
                     for(var i = 0 ; i < results.rows.length; i++){
                         details.push({
@@ -141,11 +141,8 @@ function browseDataViewModel(){
                         });
                     };
                 }
-                //console.log(ko.toJSON(details()));
-                return details;
             });
         });
-        console.log(typeof local);
         return local;
 
     }

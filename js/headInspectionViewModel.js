@@ -174,6 +174,7 @@ function HeadInspectionViewModel(){
         self.isBoxOpen(null);
         self.piecesAffected(null);
         self.selectedTypeOfDefect(null);
+        self.typeOfDefectsArray(null);
     }
 
     self.cleanHeaderForm = function(){
