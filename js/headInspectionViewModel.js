@@ -35,11 +35,11 @@ function HeadInspectionViewModel(){
 
 
     var captcha = function (val) {
-        return val == 11;
+        return val === 11;
     };
 
     var mustEqual = function (val, other) {
-        return val == other();
+        return val === other();
     };
 
     //Here can we go to database for this data
@@ -156,7 +156,7 @@ function HeadInspectionViewModel(){
 
     self.submit = function () {
         console.log(self.errors());
-        if (self.errors().length == 0) {
+        if (self.errors().length === 0) {
             self.addNewRecord();
         } else {
             alert('Please check your submission.');
@@ -194,7 +194,7 @@ function HeadInspectionViewModel(){
     }
 
     self.addDefect = function(){
-        if(self.selectedTypeOfDefect() != 'undefined' && parseInt(self.piecesAffected()) > 0){
+        if(self.selectedTypeOfDefect() !== 'undefined' && parseInt(self.piecesAffected()) > 0){
             self.typeOfDefectsArray.push(new TypeOfDefect(self.selectedTypeOfDefect().nameOfDefect, self.piecesAffected()));
         console.log(self.typeOfDefectsArray());
         }else {
