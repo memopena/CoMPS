@@ -64,11 +64,13 @@ function browseDataViewModel(){
                    for(var n = 0 ; n < details.InspectionDetail.length ; n ++){
                        self.getDefectsByLot(details.InspectionDetail[n], function(lastObject){
                            //console.log(ko.toJSON(self.object));
+                           //console.log(self.object);
+                           self.getLastObjectArray(self.object);
                        }, function(){});
                    }
                },function(){});
               }
-              self.getLastObjectArray(self.object);
+              //self.getLastObjectArray(self.object);
           },function(){});
       };
       
