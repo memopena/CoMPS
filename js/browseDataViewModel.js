@@ -6,7 +6,7 @@ function browseDataViewModel(){
     self.jsObject = ko.observableArray();
     self.jsonArr = ko.observableArray();
     self.detailArray = ko.observableArray();
-    self.lastObject = {};
+    self.lastObject = ko.observableArray();
 
     self.db.transaction(function(tx){
     str_query = "SELECT Name, PartName, TypeOfInspection, PlaceOfInspection, DateOfInspection, LotNumber, NumberOfPieces,SerialNumber, QuantityOk ,QuantityNG, isBoxOpen, InspectionHeader.PartNumber From InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber = InspectionDetail.PartNumber"
@@ -50,25 +50,24 @@ function browseDataViewModel(){
     self.getLastObjectArray = function(object){
         self.lastObject= object;
         console.log(self.lastObject);
+        console.log(JSON.stringify(self.lastObject));
     };
     
     self.buildObject = function(){
         var self = this;
-        self.arrai = [];
+        self.arr = [];
         self.object = {};
-          self.getHeaderByPart([], function(a){
-              self.object.HeaderInspection = a;
+          self.getHeaderByPart([], function(headerInspec){
+              self.object.HeaderInspection = headerInspec;
               for(var i=0 ; i < self.object.HeaderInspection.length; i++){
                self.getDetailByPart(self.object.HeaderInspection[i],function(details){
-                   self.arrai.push(details);
                    for(var n = 0 ; n < details.InspectionDetail.length ; n ++){
                        self.getDefectsByLot(details.InspectionDetail[n], function(lastObject){
-                           
+                           //console.log(ko.toJSON(self.object));
                        }, function(){});
                    }
                },function(){});
               }
-              //console.log(self.object);
               self.getLastObjectArray(self.object);
           },function(){});
       };
@@ -89,7 +88,7 @@ function browseDataViewModel(){
                             'dateOfInspection': results.rows.item(i).DateOfInspection
                         });
                     };
-                    success(header, params[1]);
+                    success(header);
                 }
             });
         });
