@@ -86,8 +86,8 @@ function HeadInspectionViewModel(){
     self.numOfPieces = ko.observable().extend({ required: true });;
     self.serialNumber = ko.observable();
     self.dateDetail = ko.observable().extend({ required: true });;
-    self.quantityOk = ko.observable().extend({ required: true });;
-    self.quantityNG = ko.observable();
+    self.quantityOk = ko.observable("0").extend({ required: true });;
+    self.quantityNG = ko.observable("0");
     self.isBoxOpen = ko.observable();
     self.piecesAffected = ko.observable();
     self.selectedTypeOfDefect = ko.observable();
@@ -98,6 +98,25 @@ function HeadInspectionViewModel(){
         total = parseInt(self.numOfPieces()) - parseInt(self.quantityOk());
         self.quantityNG(total);
         return total;
+    });
+
+    self.totalOk = ko.computed(function(){
+        var total;
+        var defectsPieces = 0;
+        if(self.numOfPieces() !== 'undefined' && parseInt(self.numOfPieces()) > 0){
+            if(self.typeOfDefectsArray().length > 0 ){
+                for(var i = 0; i < self.typeOfDefectsArray().length ; i ++){
+                    defectsPieces += parseInt(self.typeOfDefectsArray()[i].partsAffected);
+                }
+                total = parseInt(self.numOfPieces()) - parseInt(defectsPieces);
+                return self.quantityOk(total);
+            }
+            return self.quantityOk(self.numOfPieces());
+        }else {
+            total = "0";
+            return self.quantityOk(total);
+        }
+
     });
 
     //Arrays of errors in the model
@@ -119,7 +138,6 @@ function HeadInspectionViewModel(){
 
     self.addNewDefectPart = function(){
         var object;
-        console.log(self.typeOfDefectsArray());
         for(var i = 0; i < self.typeOfDefectsArray().length ; i++){
             object = new PartDefect(self.currentHeaderInspection.partNumber, self.lotNumber(), self.typeOfDefectsArray()[i].nameOfDefect, self.typeOfDefectsArray()[i].partsAffected);
             savePartDefect(object, self.db);
@@ -194,9 +212,18 @@ function HeadInspectionViewModel(){
     }
 
     self.addDefect = function(){
+        var cantDefect = 0;
         if(self.selectedTypeOfDefect() !== 'undefined' && parseInt(self.piecesAffected()) > 0){
+            if(self.typeOfDefectsArray().length > 0){
+                for(var i = 0 ; i < self.typeOfDefectsArray().length ; i++){
+                    cantDefect += parseInt(self.typeOfDefectsArray()[i].partsAffected);
+                }
+                if(cantDefect > self.numOfPieces()){
+                    alert("Cant Add More defects, check yout data");
+                }
+            }
             self.typeOfDefectsArray.push(new TypeOfDefect(self.selectedTypeOfDefect().nameOfDefect, self.piecesAffected()));
-        console.log(self.typeOfDefectsArray());
+        console.log("Add new Defect : " + self.typeOfDefectsArray());
         }else {
             window.alert("Please insert Valid data");
         }
