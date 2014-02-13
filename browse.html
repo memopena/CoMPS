@@ -43,11 +43,11 @@
       <table cellspacing="0" class="ui-responsive table-stroke" data-role="table" id="sample" data-mode="columntoggle" data-top-container="true" data-bottom-container="true" data-inset="true" data-filter="true">
        <thead>
         <tr>
+          <th rowspan="2" data-priority="3">Date Of Inspection</th>
           <th rowspan="2" >Client</th>
           <th rowspan="2" data-sortable="true" data-priority="6">Part Name</th>
           <th rowspan="2" data-priority="3" data-sortable="true">Part Number</th>
           <th rowspan="2" data-priority="6">Type Of Inspection</th>
-          <th rowspan="2" data-priority="3">Date Of Inspection</th>
         </tr>
         <tr>
           <th data-priority="6" data-sortable="true">Lot</th>
@@ -58,11 +58,11 @@
        </thead>
        <tbody class="table_body" data-bind="foreach: jsonArr">
         <tr>
+          <td data-bind="text: date"></td>
           <td data-bind="text: name"></td>
           <td data-bind="text: partName"></td>
           <td data-bind="text: partnumber"></td>
           <td data-bind="text: type"></td>
-          <td data-bind="text: date"></td>
           <td data-bind="text: lot"></td>
           <td data-bind="text: numberpieces"></td>
           <td data-bind="text: qtyOK"></td>

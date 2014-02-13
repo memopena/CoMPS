@@ -9,7 +9,8 @@ function browseDataViewModel(){
     self.lastObject = ko.observableArray();
 
     self.db.transaction(function(tx){
-    str_query = "SELECT Name, PartName, TypeOfInspection, PlaceOfInspection, DateOfInspection, LotNumber, NumberOfPieces,SerialNumber, QuantityOk ,QuantityNG, isBoxOpen, InspectionHeader.PartNumber From InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber = InspectionDetail.PartNumber"
+        str_query = "SELECT InspectionDetail.PartNumber, InspectionDetail.*, PartDefect.LotNumber, PartDefect.*, InspectionHeader.* from InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber= InspectionDetail.PartNumber INNER JOIN PartDefect ON PartDefect.LotNumber = InspectionDetail.LotNumber"
+    //str_query = "SELECT Name, PartName, TypeOfInspection, PlaceOfInspection, DateOfInspection, LotNumber, NumberOfPieces,SerialNumber, QuantityOk ,QuantityNG, isBoxOpen, InspectionHeader.PartNumber From InspectionHeader INNER JOIN InspectionDetail ON InspectionHeader.PartNumber = InspectionDetail.PartNumber"
     tx.executeSql(str_query,[],function(tx, results){
         //console.log(results);
                 if(results.rows.length > 0 ){
@@ -26,12 +27,13 @@ function browseDataViewModel(){
                             'qtyOK': results.rows.item(i).QuantityOk,
                             'qtyNG': results.rows.item(i).QuantityNG,
                             'box': results.rows.item(i).isBoxOpen,
-                            'partnumber': results.rows.item(i).PartNumber
+                            'partnumber': results.rows.item(i).PartNumber,
+                            'typeOfDefect': results.rows.item(i).TypeOfDefect
                         });
                     }
-                    //Build an Object to send JSON 
+                    //Build an Object to send JSON
                     self.buildObject();
-                    
+
 
                 }
             }, function(tx,errors){
@@ -41,18 +43,18 @@ function browseDataViewModel(){
     self.goHome = function(){
         document.location.href="index.html";
     };
-    
+
 
     self.sendData = function(){
         $.post("http://localhost:8080/InspectionLogRestService/persist/add", ko.toJSON(self.lastObject), function(){ console.log("Enviado");});
     };
-    
+
     self.getLastObjectArray = function(object){
         self.lastObject= object;
         console.log(self.lastObject);
         console.log(JSON.stringify(self.lastObject));
     };
-    
+
     self.buildObject = function(){
         var self = this;
         self.arr = [];
@@ -73,7 +75,7 @@ function browseDataViewModel(){
               //self.getLastObjectArray(self.object);
           },function(){});
       };
-      
+
     self.getHeaderByPart = function(params, success, error){
         var header = [];
         self.db.transaction(function(tx){
@@ -94,10 +96,10 @@ function browseDataViewModel(){
                 }
             });
         });
-        
-        
+
+
     };
-    
+
     self.getDetailByPart = function(object, success, error){
         var details = [];
         var part = object.partNumber;
@@ -123,7 +125,7 @@ function browseDataViewModel(){
             });
         });
     };
-    
+
     self.getDefectsByLot = function(object, success, error){
         var defects = [];
         var lotNumber = object.lotNumber;
