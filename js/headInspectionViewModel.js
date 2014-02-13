@@ -101,7 +101,7 @@ function HeadInspectionViewModel(){
     });
 
     self.totalOk = ko.computed(function(){
-        var total;
+        var total = 0;
         var defectsPieces = 0;
         if(self.numOfPieces() !== 'undefined' && parseInt(self.numOfPieces()) > 0){
             if(self.typeOfDefectsArray().length > 0 ){
@@ -109,15 +109,16 @@ function HeadInspectionViewModel(){
                     defectsPieces += parseInt(self.typeOfDefectsArray()[i].partsAffected);
                 }
                 total = parseInt(self.numOfPieces()) - parseInt(defectsPieces);
-                return self.quantityOk(total);
+                self.quantityOk(total);
+                return total;
             }
             return self.quantityOk(self.numOfPieces());
         }else {
-            total = "0";
-            return self.quantityOk(total);
+            self.quantityOk("0");
+            return total;
         }
 
-    });
+    }, this);
 
     //Arrays of errors in the model
     self.errors = ko.validation.group(self);
@@ -193,6 +194,8 @@ function HeadInspectionViewModel(){
         self.piecesAffected(null);
         self.selectedTypeOfDefect(null);
         self.typeOfDefectsArray(null);
+        self.totalNG(null);
+        self.totalOk(null);
     }
 
     self.cleanHeaderForm = function(){
@@ -213,7 +216,7 @@ function HeadInspectionViewModel(){
 
     self.addDefect = function(){
         var cantDefect = 0;
-        if(self.selectedTypeOfDefect() !== 'undefined' && parseInt(self.piecesAffected()) > 0){
+        if(typeof self.selectedTypeOfDefect() != 'undefined' && parseInt(self.piecesAffected()) > 0 && parseInt(self.piecesAffected()) < parseInt(self.quantityOk()) ){
             if(self.typeOfDefectsArray().length > 0){
                 for(var i = 0 ; i < self.typeOfDefectsArray().length ; i++){
                     cantDefect += parseInt(self.typeOfDefectsArray()[i].partsAffected);
