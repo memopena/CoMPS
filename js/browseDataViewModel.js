@@ -84,7 +84,7 @@ function browseDataViewModel(){
                 if(results.rows.length > 0 ){
                     for(var i = 0 ; i < results.rows.length; i++){
                         header.push({
-                            'client': results.rows.item(i).Name,
+                            'name': results.rows.item(i).Name,
                             'partName' : results.rows.item(i).PartName,
                             'partNumber' : results.rows.item(i).PartNumber,
                             'typeOfInspection': results.rows.item(i).TypeOfInspection,
